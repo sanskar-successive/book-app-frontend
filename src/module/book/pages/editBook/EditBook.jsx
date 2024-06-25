@@ -1,29 +1,16 @@
-import React, { useState } from 'react';
-import { PlusOutlined } from '@ant-design/icons';
-import { useParams, useNavigate } from 'react-router-dom'
+import React, {useState} from 'react';
+import { useParams } from 'react-router-dom'
 import dayjs from 'dayjs';
-import {
-    Button,
-    Cascader,
-    Checkbox,
-    ColorPicker,
-    DatePicker,
-    Form,
-    Input,
-    InputNumber,
-    Radio,
-    Rate,
-    Select,
-    Slider,
-    Switch,
-    TreeSelect,
-    Upload,
-} from 'antd';
-import useCreateBook from '../../hooks/useCreateBook';
+import { Button, Checkbox, DatePicker, Form, Input, InputNumber, Rate, Select, TextArea, Skeleton, Empty, Spin, Result } from '../../../../lib/generics';
 import useFetchBookDetails from '../../hooks/useFetchBookDetails';
 import useUpdateBook from '../../hooks/useUpdateBook';
-const { RangePicker } = DatePicker;
-const { TextArea } = Input;
+import { validateMessages } from '../../utils/validateMessage';
+import { categories } from '../../utils/categories';
+import { languages } from '../../utils/languages';
+import { BookService } from '../../Service';
+
+
+
 const normFile = (e) => {
     if (Array.isArray(e)) {
         return e;
@@ -32,54 +19,44 @@ const normFile = (e) => {
 };
 
 
-const categories = [
-    "fiction",
-    "mystery",
-    "arts",
-    "science",
-    "romance",
-    "horror",
-    "religion",
-    "philosophy",
-    "history",
-    "poetry",
-    "biography",
-    "technology",
-];
-
-const languages = ["english", "hindi", "sanskrit", "telugu", "bengali"];
-
-const validateMessages = {
-    required: '${label} is required!',
-    types: {
-        email: '${label} is not a valid email!',
-        number: '${label} is not a valid number!',
-    },
-};
-
-
 const EditBook = () => {
 
     const { bookId } = useParams();
 
-
     const { loading, error, book } = useFetchBookDetails(bookId);
 
-    const useUpdatedBookInstance = useUpdateBook();
+
+    const [response, setResponse] = useState({});
+    const [updateError, setUpdateError] = useState("");
+    const [submissionLoading, setSubmissionLoading] = useState(false);
+
+    const updateBook = async (id, payload) => {
+        setSubmissionLoading(true);
+        try {
+            const { data } = await BookService.updateBook(id, payload);
+            console.log("response", data);
+            setResponse(data);
+
+        } catch (error) {
+            setUpdateError(error.message);
+        }
+        finally {
+            setSubmissionLoading(false)
+        }
+    }
 
 
     const handleUpdateBookDetails = async (value) => {
-
-        await useUpdatedBookInstance.updateBook(bookId, value);
+        await updateBook(bookId, value);
     }
 
 
     if (loading) {
-        return <h2>loading</h2>
+        return <Skeleton />
     }
-
+    
     if (error) {
-        return <h2>{error}</h2>
+        return <Empty description="Something went wrong" />
     }
 
     const originalDate = book.moreDetails.firstPublished
@@ -94,25 +71,22 @@ const EditBook = () => {
 
 
 
-
-    if (useUpdatedBookInstance.loading) {
-        return <h2>loading</h2>
+    if (submissionLoading) {
+        return <Spin fullscreen />
     }
 
-
-    if (useUpdatedBookInstance.error) {
-        return <h2>{error}</h2>
+    if (updateError) {
+        return <Result status="error" title="Updation Failed" />
     }
+
+    if (Object.keys(response).length>0) {
+        return <Result status="success" title="Updated successfully" />
+    }
+
 
     return (
 
         <Form
-            labelCol={{
-                span: 4,
-            }}
-            wrapperCol={{
-                span: 14,
-            }}
             layout="horizontal"
             style={{
                 maxWidth: 600,

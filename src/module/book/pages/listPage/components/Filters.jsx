@@ -1,32 +1,14 @@
 import React from 'react'
-import { Card, Table, Space, Anchor, Checkbox, InputNumber, Button, Search, Sider } from '../../../../../lib/generics'
+import { Card, Checkbox, InputNumber, Button, Title } from '../../../../../lib/generics'
 import { Form } from 'antd';
 import { useLocation, useSearchParams } from "react-router-dom";
 import { memo } from 'react';
+import { categories } from '../../../utils/categories';
+import { languages } from '../../../utils/languages';
 
-
-
-const categories = [
-    "fiction",
-    "mystery",
-    "arts",
-    "science",
-    "romance",
-    "horror",
-    "religion",
-    "philosophy",
-    "history",
-    "poetry",
-    "biography",
-    "technology",
-];
-
-const languages = ["english", "hindi", "sanskrit", "telugu", "bengali"];
 
 
 const Filters = () => {
-
-
 
     const location = useLocation();
 
@@ -111,19 +93,25 @@ const Filters = () => {
             }
         });
 
+
+
         setQueryParams(queryParams);
     }
 
 
     return (
         <Card
+            style={{ marginRight: 50 }}
         >
+            <Title level={5}>Filters</Title>
+
 
             <Form
                 onFinish={handleApplyFilters}
                 initialValues={initialValues}
             >
 
+                <Title level={5}>Price Range</Title>
                 <Form.Item name={["price", "from"]}>
                     <InputNumber min={50} max={2000} />
                 </Form.Item>
@@ -132,16 +120,16 @@ const Filters = () => {
                     <InputNumber min={50} max={2000} />
                 </Form.Item>
 
+                <Title level={5}>Rating</Title>
                 <Form.Item valuePropName='checked' name={["rating", "aboveThree"]}>
                     <Checkbox >3+</Checkbox>
                 </Form.Item>
-
 
                 <Form.Item valuePropName='checked' name={["rating", "aboveFour"]}>
                     <Checkbox >4+</Checkbox>
                 </Form.Item>
 
-
+                <Title level={5}>Category</Title>
                 {categories.map((item) => {
                     return (
                         <Form.Item valuePropName='checked' name={["category", `${item}`]}>
@@ -150,6 +138,7 @@ const Filters = () => {
                     )
                 })}
 
+                <Title level={5}>Language</Title>
 
                 {languages.map((item) => {
                     return (
@@ -161,7 +150,7 @@ const Filters = () => {
 
 
                 <Form.Item >
-                    <Button htmlType="submit">Apply</Button>
+                    <Button type='default' htmlType="submit">Apply</Button>
 
                 </Form.Item>
 

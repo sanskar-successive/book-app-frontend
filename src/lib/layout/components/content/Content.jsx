@@ -1,7 +1,5 @@
 import React from 'react'
-import { Breadcrumb, Layout, Menu, theme } from 'antd';
-const { Header, Content, Sider } = Layout;
-
+import { Content, theme } from '../../../generics';
 
 const PageContent = ({ children }) => {
     const {

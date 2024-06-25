@@ -1,9 +1,12 @@
 
-import { Card, Table, Space, Anchor, Checkbox, InputNumber, Button, Search, Sider } from '../../../../lib/generics'
-import { useEffect } from 'react';
-import { useState } from 'react';
+import { Table, Space, Button, Empty, Skeleton } from '../../../../lib/generics'
+import { useEffect, useState } from 'react';
 import { BookService } from '../../Service';
-import { useNavigate } from 'react-router-dom'
+import { getCsvUploadColumns } from '../../utils/csvUploadColumns';
+import { useLocation, useNavigate } from 'react-router-dom'
+import TablePagination from '../listPage/components/Pagination'
+import Sort from '../listPage/components/Sort';
+import { csvUploadsSortOptions } from '../../utils/sortOptions';
 
 
 function CsvUploads() {
@@ -11,62 +14,37 @@ function CsvUploads() {
   const [csvUploads, setCsvUploads] = useState([]);
   const [errors, setErrors] = useState("");
   const [loading, setLoading] = useState(true);
+  const [count, setCount] = useState(0);
   const navigate = useNavigate();
+  let csvUploadColumns = getCsvUploadColumns();
 
-  const columns = [
-    {
-      title: 'Records Processed',
-      dataIndex: 'recordsProcessed',
-      // key: 'Title',
-    },
-    {
-      title: 'Errors',
-      dataIndex: 'totalErrors',
-      // key: 'Author',
-    },
-    {
-      title: 'Time Taken',
-      dataIndex: 'timeTaken',
-      // key: 'Price',
-    },
-    {
-      title: 'Id',
-      dataIndex: 'session_id',
-      // key: 'Rating',
-    },
+  const location = useLocation();
 
-    {
-      title: 'Created At',
-      dataIndex: 'createdAt',
-      // key: 'Created At',
-    },
-
+  csvUploadColumns = [
+    ...csvUploadColumns,
     {
       title: 'Action',
       dataIndex: '_id',
-      // key: 'action',
+      key: 'action',
       render: (_, { session_id }) => (
-        <Space size="small" >
-          <Button onClick={() => navigate(`/bulk-uploads/${session_id}`)} >View</Button>
+        <Space size="small">
+          <Button onClick={() => navigate(`/bulk-uploads/${session_id}`)}>View</Button>
         </Space>
       ),
-
     },
   ];
 
   const fetchCSVUploadsData = async () => {
-    setLoading(true);
     try {
-      // const { data } = await BookService.getBooksForHomePage();
 
-      const { data } = await BookService.getCSVUploads();
+      const { data } = await BookService.getCSVUploads(location.search);
 
       console.log("data", data.bulkUploads);
       setCsvUploads(data.bulkUploads);
+      setCount(data.count)
+      setLoading(false)
     } catch (error) {
       setErrors(error.message);
-    }
-    finally {
       setLoading(false)
     }
   }
@@ -76,20 +54,29 @@ function CsvUploads() {
   }, []);
 
   if (loading) {
-    return <h2>loading</h2>
+    return <Skeleton />
+  }
+  
+  if (errors) {
+    return <Empty description="Something went wrong" />
   }
 
-  if (errors) {
-    return <h2>some error occured</h2>
+  if(count===0){
+    return <Empty/>
   }
   return (
-    <>
+
+    <Space direction='vertical'>
+      <Sort sortOptions={csvUploadsSortOptions}/>
+      <Table dataSource={csvUploads} columns={csvUploadColumns} pagination={false} />
+      <TablePagination totalItems={count} />
+    </Space>
 
 
-      <Table style={{ marginLeft: 400 }} dataSource={csvUploads} columns={columns} />
-
-    </>
   );
 }
 
 export default CsvUploads;
+
+
+

@@ -1,28 +1,9 @@
 import React from 'react';
-import { Descriptions } from 'antd';
+import { Descriptions, Empty, Skeleton } from '../../../../lib/generics';
 import useFetchBookDetails from '../../hooks/useFetchBookDetails';
 import { useParams } from "react-router-dom";
+import { flattenObj } from '../../../../lib/helpers/flattenObj';
 
-const flattenObj = (ob) => {
-
-    let result = {};
-
-    for (const i in ob) {
-
-        if ((typeof ob[i]) === 'object' && !Array.isArray(ob[i])) {
-            const temp = flattenObj(ob[i]);
-            for (const j in temp) {
-
-                result[j] = temp[j];
-            }
-        }
-
-        else {
-            result[i] = ob[i];
-        }
-    }
-    return result;
-};
 
 const BookDetails = () => {
 
@@ -32,7 +13,6 @@ const BookDetails = () => {
 
     const flattenbook = flattenObj(book);
 
-    console.log(flattenbook);
     const items = Object.keys(flattenbook).map((item, index) => {
 
         return {
@@ -42,14 +22,16 @@ const BookDetails = () => {
         }
 
     })
-
-
     if (loading) {
-        return <h2>loading..</h2>
+        return <Skeleton />
     }
 
     if (error) {
-        return <h2>some error occured</h2>
+        return <Empty description="Something went wrong" />
+    }
+
+    if(!book){
+        return <Empty />
     }
 
     return (

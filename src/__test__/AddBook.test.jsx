@@ -8,6 +8,7 @@ import AddBook from "../module/book/pages/addBook/AddBook";
 describe("Add Book component", () => {
 
     test("should renders error", async () => {
+        localStorage.setItem("addbook", "addbook");
         render(
             <MemoryRouter initialEntries={['/add-book']}>
                 <Routes>
@@ -16,11 +17,12 @@ describe("Add Book component", () => {
             </MemoryRouter>
         );
 
-        const addButton = screen.getByRole('button', {name : /add/i});
+        const addButton = screen.getByRole('button', { name: /add/i });
         fireEvent.click(addButton);
     });
 
     test("should renders pre filled form", async () => {
+        localStorage.removeItem("addbook");
         render(
             <MemoryRouter initialEntries={['/add-book']}>
                 <Routes>
@@ -29,7 +31,7 @@ describe("Add Book component", () => {
             </MemoryRouter>
         );
 
-        const addButton = screen.getByRole('button', {name : /add/i});
+        const addButton = screen.getByRole('button', { name: /add/i });
         fireEvent.click(addButton);
     });
 });

@@ -23,10 +23,6 @@ const useUpdateBook = () => {
         }
     }
 
-    // useEffect(() => {
-    //     console.log("response after", response);
-    // }, [response]);
-
     return { loading, error, response, updateBook };
 
 }

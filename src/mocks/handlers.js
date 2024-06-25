@@ -33,9 +33,8 @@ export const handlers = [
   http.post(`http://localhost:5000/api/books`, async ({ request }) => {
     if (localStorage.getItem("addbook")) return HttpResponse.error();
     else {
-      return new HttpResponse.json(mockBook)
+      return HttpResponse.json({ firstName: 'John' })
     }
-    // const newMockBook = await request.json();
   }),
 
   http.patch(`http://localhost:5000/api/books/:bookId`, async ({ params }) => {

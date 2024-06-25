@@ -1,15 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { Descriptions } from 'antd';
-import { UserService } from '../../Service';
+import React from 'react';
+import useFetchUserAccount from '../../hooks/useFetchUserAccount';
+import { Skeleton, Empty, Descriptions } from '../../../../lib/generics';
 import { flattenObj } from '../../../../lib/helpers/flattenObj';
-
 
 
 const Profile = () => {
 
-    const [profile, setProfile] = useState({});
-    const [loading, setLoading] = useState(true);
-    const [errors, setErrors] = useState("");
+    const { loading, error, profile } = useFetchUserAccount();
 
     const flattenUser = flattenObj(profile);
 
@@ -22,29 +19,12 @@ const Profile = () => {
         }
     })
 
-    const fetchUserAccount = async () => {
-        try {
-            const { data } = await UserService.getUserAccount();
-            setProfile(data.user);
-        } catch (error) {
-            setErrors(error.message);
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    useEffect(() => {
-        fetchUserAccount();
-    }, [])
-
-
-
     if (loading) {
-        return <h2>loading..</h2>
+        return <Skeleton />
     }
-
-    if (errors) {
-        return <h2>some error occured</h2>
+    
+    if (error) {
+        return <Empty description="Something went wrong" />
     }
 
     return (

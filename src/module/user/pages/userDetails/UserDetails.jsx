@@ -1,7 +1,7 @@
 import React from 'react';
-import { Descriptions } from 'antd';
 import { useParams } from "react-router-dom";
 import useFetchUserDetails from '../../hooks/useFetchUserDetails';
+import { Descriptions, Skeleton, Empty } from '../../../../lib/generics';
 import { flattenObj } from '../../../../lib/helpers/flattenObj';
 
 
@@ -22,12 +22,13 @@ const UserDetails = () => {
         }
     })
 
-    if (loading) {
-        return <h2>loading..</h2>
-    }
 
+    if (loading) {
+        return <Skeleton />
+    }
+    
     if (error) {
-        return <h2>some error occured</h2>
+        return <Empty description="Something went wrong" />
     }
 
     return (

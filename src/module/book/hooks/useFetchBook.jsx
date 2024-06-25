@@ -6,8 +6,7 @@ import {useLocation} from 'react-router-dom'
 const useFetchBook = () => {
 
     const location = useLocation();
-
-    // console.log("query", location.search);
+    
     const [book, setBook] = useState([]);
     const [count, setCount] = useState(0);
     const [error, setError] = useState("");

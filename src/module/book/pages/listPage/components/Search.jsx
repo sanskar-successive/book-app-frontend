@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Table, Space, Anchor, Checkbox, InputNumber, Button, Search, Sider } from '../../../../../lib/generics'
+import { Search } from '../../../../../lib/generics'
 import { useSearchParams } from "react-router-dom";
 import { memo } from 'react';
 
@@ -30,7 +30,10 @@ const SearchBar = () => {
   };
 
   return (
-    <Search defaultValue={initialValue} maxLength={50} placeholder="input search text" onSearch={handleSearch} enterButton />
+    <Search style={{
+      width: 400,
+    }}
+      defaultValue={initialValue} maxLength={50} placeholder="Search books" onSearch={handleSearch} enterButton />
   )
 }
 

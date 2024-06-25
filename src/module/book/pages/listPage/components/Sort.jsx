@@ -1,11 +1,10 @@
-import React, { useState, useEffect, memo } from 'react';
-import { Segmented } from 'antd';
+import React, { memo } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
+import { Title, Space, Segmented } from '../../../../../lib/generics';
+// import { sortOptions } from '../../../utils/sortOptions';
 
-const options = ['newest', 'title', 'price low to high', 'price high to low', 'popularity'];
 
-const Sort = () => {
-    // const [sortBy, setSortBy] = useState('newest');
+const Sort = ({sortOptions}) => {
     const location = useLocation();
     const [queryParams, setQueryParams] = useSearchParams(location.search);
 
@@ -35,7 +34,12 @@ const Sort = () => {
         setQueryParams(queryParams);
     };
 
-    return <Segmented value={sortBy} onChange={handleSortBy} options={options} />;
+    return(
+        <Space>
+            <Title level={5}>Sort By</Title>
+            <Segmented value={sortBy} onChange={handleSortBy} options={sortOptions} />
+        </Space>
+    ) 
 };
 
 export default memo(Sort);

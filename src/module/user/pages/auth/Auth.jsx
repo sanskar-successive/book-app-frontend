@@ -1,17 +1,5 @@
 import React, { useState } from 'react';
-import {
-    AutoComplete,
-    Button,
-    Cascader,
-    Checkbox,
-    Col,
-    Form,
-    Input,
-    InputNumber,
-    Row,
-    Select,
-} from 'antd';
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Form, Input, LockOutlined, Title, UserOutlined, Spin, Result, message } from '../../../../lib/generics';
 import { useNavigate } from 'react-router-dom'
 import { UserService } from '../../Service';
 
@@ -21,36 +9,60 @@ const AuthPage = () => {
     const [toggleAuthForm, setToggleAuthForm] = useState("login");
     const navigate = useNavigate();
 
-    const handleLogin = async (values) => {
+    const [loading, setLoading] = useState(false);
 
+    const handleLogin = async (values) => {
+        setLoading(true);
         try {
             const { data } = await UserService.userLogin(values);
 
-            if (data.authorised) {
+            if (data.authorised === true) {
                 localStorage.setItem("AUTH-TOKEN", data.token);
+                message.success("Login success")
                 navigate('/', { replace: true })
             }
+            else {
+                message.error("Invalid email or password")
+            }
+            setLoading(false)
         } catch (error) {
-            console.log("Some error occurred", error);
+
+            console.log("some error in login", error);
+            message.error(error.response.data.message);
+            setLoading(false)
+
         }
     }
 
-    const handleRegister = async (values) => {
+
+    const handleRegister = async (value) => {
+        setLoading(true);
         try {
-            const { data } = await UserService.userRegister(values);
-
+            const { data } = await UserService.userRegister(value);
+            setLoading(false)
+            message.success("Registered successfully, Login now")
+            setToggleAuthForm("login");
         } catch (error) {
-            
+            console.log("Some error occurred in register", error);
+            message.error(error.response.data.message);
+            setLoading(false)
         }
-
     };
 
+
+    if (loading) {
+        return <Spin />
+    }
+
     if (toggleAuthForm === "login") {
+
+
         return (
             <>
+                <Title level={4}>User Login</Title>
                 <Form
-                    initialValues={{
-                        remember: true,
+                    style={{
+                        maxWidth: 400,
                     }}
                     onFinish={handleLogin}
                 >
@@ -58,13 +70,19 @@ const AuthPage = () => {
                         name="email"
                         rules={[
                             {
+                                type: 'email',
+                                message: 'The input is not valid E-mail!',
+                            },
+                            {
                                 required: true,
-                                message: 'Please input your Email!',
+                                message: 'Please input your E-mail!',
                             },
                         ]}
+
                     >
                         <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" />
                     </Form.Item>
+
                     <Form.Item
                         name="password"
                         rules={[
@@ -74,22 +92,21 @@ const AuthPage = () => {
                             },
                         ]}
                     >
-                        <Input
-                            prefix={<LockOutlined className="site-form-item-icon" />}
+                        <Input.Password prefix={<LockOutlined className="site-form-item-icon" />}
                             type="password"
-                            placeholder="Password"
-                        />
+                            placeholder="Password" />
+
+
+
                     </Form.Item>
                     <Form.Item>
 
-                        <a className="login-form-forgot" href="">
-                            Forgot password
-                        </a>
+                        <a>Forgot password</a>
                     </Form.Item>
 
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" className="login-form-button">
-                            Log in
+                        <Button type="primary" htmlType="submit">
+                            Sign In
                         </Button>
 
                     </Form.Item>
@@ -102,11 +119,12 @@ const AuthPage = () => {
 
     return (
         <>
+            <Title level={4}>User Register</Title>
             <Form
                 onFinish={handleRegister}
                 layout="horizontal"
                 style={{
-                    maxWidth: 600,
+                    maxWidth: 400,
                 }}
                 scrollToFirstError
             >
@@ -115,7 +133,7 @@ const AuthPage = () => {
 
                 <Form.Item
                     name="firstName"
-                    label="firstName"
+                    label="First Name"
                     rules={[
                         {
                             required: true,
@@ -129,7 +147,7 @@ const AuthPage = () => {
 
                 <Form.Item
                     name="lastName"
-                    label="lastName"
+                    label="Last Name"
                 >
                     <Input />
                 </Form.Item>

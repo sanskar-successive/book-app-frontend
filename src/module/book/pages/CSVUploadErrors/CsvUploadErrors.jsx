@@ -1,9 +1,11 @@
 
-import { Card, Table, Space, Anchor, Checkbox, InputNumber, Button, Search, Sider } from '../../../../lib/generics'
+import { Table, Skeleton, Empty } from '../../../../lib/generics'
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { BookService } from '../../Service';
-import { useNavigate, useParams } from 'react-router-dom'
+import {  useParams } from 'react-router-dom'
+import { csvErrorColumns } from '../../utils/csvErrorColumns';
+
 
 
 function CsvUploadErrors() {
@@ -14,23 +16,7 @@ function CsvUploadErrors() {
 
     const { session_id } = useParams();
 
-    const columns = [
-        {
-            title: 'Row No.',
-            dataIndex: 'rowNumber',
-            // key: 'Title',
-        },
-        {
-            title: 'Error Details',
-            dataIndex: 'errorDetails',
-            // key: 'Author',
-        },
-        {
-            title: 'Id',
-            dataIndex: 'session_id',
-            // key: 'Rating',
-        },
-    ];
+
 
     const fetchCSVUploadErrors = async () => {
         setLoading(true);
@@ -53,17 +39,17 @@ function CsvUploadErrors() {
     }, []);
 
     if (loading) {
-        return <h2>loading</h2>
+        return <Skeleton />
     }
 
     if (errors) {
-        return <h2>some error occured</h2>
+        return <Empty description="Something went wrong" />
     }
     return (
         <>
 
 
-            <Table style={{ marginLeft: 400 }} dataSource={csvUploadErrors} columns={columns} />
+            <Table dataSource={csvUploadErrors} columns={csvErrorColumns} />
 
         </>
     );

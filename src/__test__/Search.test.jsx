@@ -1,25 +1,35 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+// import { fireEvent, render, screen } from "@testing-library/react";
+// import { describe, test, expect } from "vitest";
+// import { MemoryRouter, BrowserRouter, Route, Routes } from "react-router-dom";
+// import Search from "../module/book/pages/listPage/components/Search";
+
+
+// describe("Search component", () => {
+
+//     test("should renders search component", async () => {
+//         render(
+//             <BrowserRouter>
+//                 <Search />
+//             </BrowserRouter>
+//         );
+//     });
+// });
+
+import React from 'react';
+import { render, fireEvent, screen } from '@testing-library/react';
 import { describe, test, expect } from "vitest";
-import { MemoryRouter, BrowserRouter, Route, Routes } from "react-router-dom";
-import Search from "../module/book/pages/listPage/components/Search";
+import { BrowserRouter as Router } from 'react-router-dom';
+import Search from '../module/book/pages/listPage/components/Search';
 
+test('SearchBar handles search input correctly', () => {
+  const { container } = render(
+    <Router>
+      <Search />
+    </Router>
+  );
 
-describe("User details page", () => {
-
-    test("should renders error", async () => {
-        localStorage.setItem("profile", "profile");
-        render(
-            <BrowserRouter>
-                <Search />
-            </BrowserRouter>
-        );
-
-        const loadingText = screen.getByRole('heading', { name: /loading/i });
-        expect(loadingText).toBeInTheDocument();
-
-
-        const errorText = await screen.findByText("some error occured");
-        expect(errorText).toBeInTheDocument()
-
-    });
+  expect(screen.getByPlaceholderText('input search text').value).toBe('');
+  fireEvent.change(screen.getByPlaceholderText('input search text'), { target: { value: 'test' } });
+  expect(screen.getByPlaceholderText('input search text').value).toBe('test');
+  fireEvent.click(screen.getByRole('button', { name: /search/i }));
 });

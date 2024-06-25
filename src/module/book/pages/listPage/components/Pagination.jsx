@@ -1,60 +1,50 @@
-import { memo, useEffect, useState } from "react";
+import { memo } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
-import { Pagination } from 'antd';
+import { Pagination } from "../../../../../lib/generics";
+import PropTypes from "prop-types";
 
 
 const TablePagination = ({ totalItems }) => {
 
-  // const [limit, setLimit] = useState(10);
-
-  let limit=10, skip=0, currentPage=1;
+  let limit = 20, skip = 0, currentPage = 1;
 
 
   const location = useLocation();
   const [queryParams, setQueryParams] = useSearchParams(location.search);
 
   let current = 1;
-  let toLimit = 10;
+  let toLimit = 20;
 
-  if(queryParams.has("skip")){
+  if (queryParams.has("skip")) {
 
     let toSkip = Number(queryParams.get("skip"));
-    
 
-    if(queryParams.has("limit")){
+    if (queryParams.has("limit")) {
       toLimit = Number(queryParams.get("limit"));
     }
 
-    current = Math.floor((toSkip+toLimit)/toLimit);
+    current = Math.floor((toSkip + toLimit) / toLimit);
   }
 
-  // // const limitOptions = [10, 20, 50];
 
 
   const handlePageChange = (pageNumber) => {
-    // console.log("pagenumber", pageNumber);
+
     currentPage = pageNumber;
     skip = (currentPage - 1) * limit;
 
     if (currentPage !== 1) {
-      // if (queryParams.has("skip")) {
-      //   queryParams.delete("skip");
+
       queryParams.set("skip", skip);
-      // } else {
-      //   queryParams.set("skip", skip);
-      // }
+
     } else {
       queryParams.delete("skip");
     }
 
-    if (limit !== 10) {
-      // if (queryParams.has("limit")) {
-      //   queryParams.delete("limit");
+    if (limit !== 20) {
+
       queryParams.set("limit", limit);
-      // } 
-      // else {
-      //   queryParams.set("limit", limit);
-      // }
+
     } else {
       queryParams.delete("limit");
     }
@@ -63,30 +53,23 @@ const TablePagination = ({ totalItems }) => {
   }
 
   const handleLimitChange = (current, pageSize) => {
-    // console.log(current, pageSize);
+
     currentPage = current;
     limit = pageSize;
     skip = (currentPage - 1) * limit;
 
     if (currentPage !== 1) {
-      // if (queryParams.has("skip")) {
-      //   queryParams.delete("skip");
+
       queryParams.set("skip", skip);
-      // } else {
-      //   queryParams.set("skip", skip);
-      // }
+
     } else {
       queryParams.delete("skip");
     }
 
-    if (limit !== 10) {
-      // if (queryParams.has("limit")) {
-      //   queryParams.delete("limit");
+    if (limit !== 20) {
+
       queryParams.set("limit", limit);
-      // } 
-      // else {
-      //   queryParams.set("limit", limit);
-      // }
+
     } else {
       queryParams.delete("limit");
     }
@@ -95,48 +78,15 @@ const TablePagination = ({ totalItems }) => {
 
   }
 
-  // useEffect(() => {
-
-  //   console.log("limit", limit);
-  //   console.log("skip", skip);
-  //   console.log("current", currentPage);
-
-  //   if (currentPage !== 1) {
-  //     // if (queryParams.has("skip")) {
-  //     //   queryParams.delete("skip");
-  //     queryParams.set("skip", skip);
-  //     // } else {
-  //     //   queryParams.set("skip", skip);
-  //     // }
-  //   } else {
-  //     queryParams.delete("skip");
-  //   }
-
-  //   if (limit !== 10) {
-  //     // if (queryParams.has("limit")) {
-  //     //   queryParams.delete("limit");
-  //     queryParams.set("limit", limit);
-  //     // } 
-  //     // else {
-  //     //   queryParams.set("limit", limit);
-  //     // }
-  //   } else {
-  //     queryParams.delete("limit");
-  //   }
-
-  //   setQueryParams(queryParams);
-  // }, [currentPage, limit, skip]);
-
-
-
-
   return (
     <Pagination
+      responsive
       current={current}
       total={totalItems}
-      pageSize={toLimit}
       showSizeChanger
+      pageSize={Number(queryParams.get("limit")) || 20}
       showQuickJumper
+      pageSizeOptions={[10,20,30]}
       showTotal={(total) => `Total ${total} items`}
       onShowSizeChange={handleLimitChange}
       onChange={handlePageChange}
@@ -144,6 +94,11 @@ const TablePagination = ({ totalItems }) => {
   )
 
 }
+
+TablePagination.propTypes = {
+  totalItems: PropTypes.number.isRequired,
+};
+
 
 
 export default memo(TablePagination);

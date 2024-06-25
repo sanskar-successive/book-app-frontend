@@ -2,7 +2,7 @@ import axios from 'axios';
 
 axios.interceptors.request.use(function (config) {
 
-    if (config.url !== '/login' && config.url !== '/register') {
+    if (config.url !== '/login') {
         config.headers['Authorization'] = localStorage.getItem("AUTH-TOKEN")
     }
     return config;
@@ -20,7 +20,7 @@ axios.interceptors.response.use(function (response) {
 
     if(error.response.status===403 || error.response.data.authorised===false){
         localStorage.removeItem("AUTH-TOKEN")
-        window.location.href = "http://localhost:3000/login"
+        if(window.location.pathname!=='/login') window.location.href = "http://localhost:3000/login"
     }
     return Promise.reject(error);
 });
