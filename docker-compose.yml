@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    ports:
+      -"27017:27017"
+  
+  book-backend: 
+    image: backend
+    container_name: book-backend
+    depends_on:
+      - mongodb
+    ports:
+      -"5000:5000"
+    environment:
+      - MONGOURL: "mongodb://mongodb:27017"
